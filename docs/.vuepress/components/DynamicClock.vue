@@ -1,47 +1,10 @@
----
-title: 粒子时钟实现
-author: Triabin
-createTime: 2024/07/26 17:27:53
-permalink: /article/b40pkppm/
----
-# 粒子时钟实现方案
-
-## 1、预期效果
-
-* 网页刷新后，首先生成一定数量的粒子，随机分布在一个环形上
-* 粒子迅速按照当前时间的数字为轨迹移动到指定位置上排列
-* 粒子的排布随着时间的变化而变化
-
-## 2、实现思路
-
-* 创建一个画布，在画布上按照需求画出粒子，起始粒子所处的环形直径为画布高度
-
-* 将每一个粒子当做一个对象，为确定其位置，设计属性
-
-  ① 粒子本身属性：x坐标、y坐标、粒子半径（粒子大小随机）
-
-  ② 粒子（圆心）所处位置
-
-  ③ 起始位置形成的环的半径（画布高度的一半），粒子圆心坐标到环圆心坐标直线形成的夹角角度（随机，同时也为了确定起始位置）
-  
-  ④ 为类本身设计draw和moveTo两个方法，分别用于在画布上绘画和移动粒子
-  
-* 获取当前时间字符串，在画布上按照所需字体、大小使用黑色画出当前时间，然后在画布上找出颜色为黑色的像素点坐标，记录这些坐标，然后清空画布
-
-  Tips：不一定要获取所有坐标，因为粒子密度可以根据需求减小，因此可以设置一个步长来跳过一些坐标
-
-* 在环形上动态调整所需（粒子）坐标数量，然后调用粒子本身的draw函数绘制出粒子，然后调用其moveTo函数移动到上一步获取到的坐标上去，不但重复这一过程。
-
-## 3、代码实现（vue3环境，封装了组件）
-
-```vue
 <!-- 动态时钟组件 -->
 <template>
   <canvas ref="canvasRef"></canvas>
 </template>
 
 <script setup>
-import { ref, onMounted, defineProps } from 'vue';
+import { ref, onMounted } from 'vue';
 
 const canvasRef = ref(null);
 const ctx = ref(null);
@@ -74,23 +37,23 @@ const props = defineProps({
 });
 
 onMounted(async () => {
-  canvasRef.value.width = window.innerWidth * devicePixelRatio;
-  canvasRef.value.height = window.innerHeight * devicePixelRatio;
+  canvasRef.value.width = props.fontSize * 8 * devicePixelRatio;
+  canvasRef.value.height = props.fontSize * 2 * devicePixelRatio;
   draw();
 });
 
-// 获取[min,max]之间的随机整数
-const getRandom = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
+// 获取指定范围内的随机整数
+const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 
 // 时钟数字由一个个粒子构成，将每一个粒子当做一个对象，创建粒子对象
 class Particle {
   constructor() {
     // 粒子半径
-    this.r = getRandom(2 * devicePixelRatio, 7 * devicePixelRatio);
+    this.r = randomInt(2 * devicePixelRatio, 7 * devicePixelRatio);
     // 环半径
     const ar = Math.min(canvasRef.value.width, canvasRef.value.height) / 2;
     // 粒子初始位置圆心与环圆心形成的夹角（随机）
-    const rad = getRandom(0, 360) * Math.PI / 180; // 角度转换为弧度
+    const rad = randomInt(0, 360) * Math.PI / 180; // 角度转换为弧度
     // 环圆心横坐标
     const ax = canvasRef.value.width / 2;
     // 环圆心纵坐标
@@ -158,14 +121,11 @@ const draw = () => {
   requestAnimationFrame(draw);
 }
 
-// 获取当前时间文字
-const getTimeText = () => new Date().toTimeString().substring(0, 8);
-
 // 更新画布粒子
 let curTimeText = undefined;
 const update = () => {
   // 判断差异，避免无意义更新
-  const text = getTimeText();
+  const text = new Date().format('HH:mm:ss');
   if (text === curTimeText) {
     return;
   }
@@ -225,14 +185,7 @@ canvas {
   /*background: radial-gradient(#FFF, #8C738C);*/
   background: transparent;
   display: block;
-  width: 35vw;
-  height: 35vh;
+  width: 100%;
+  height: 100%;
 }
 </style>
-```
-
-## 4、实现效果
-`<Clock color="#283747AF" font="sans-serif" :fontSize="320" :density="6"/>`
-
-**![dynamicClock](/images/dynamicClock.gif)**
-

@@ -5,10 +5,15 @@ createTime: 2024/07/26 17:27:53
 permalink: /article/1gwfmbvf/
 ---
 # 正则表达式（Java）
+
 ## 概念
+
 * 正则表达式：regular expression => regex/RegExp/regExp，是对字符串执行模式匹配的技术
+
 ## 底层原理
+
 ### 匹配规则
+
 * 使用
 
   ```java
@@ -30,7 +35,9 @@ permalink: /article/1gwfmbvf/
   1. 执行matcher.find()方法时，根据指定正则遍历字符串的Character[]数组，找到（定位）符合规则的字串；
   2. 将匹配到的符合正则的子串索引记录到matcher对象的int[] groups数组，`起始索引`记录到groups[0]，`结束索引+1`记录到groups[1]；
   3. 将oldLast的值同步更新为`结束索引+1`，以便下次执行find()方法时从oldLast开始匹配。
+
 ### 分组
+
 * 使用：使用小括号
 
   ```java
@@ -51,7 +58,7 @@ permalink: /article/1gwfmbvf/
   }
   ```
 
-  **![image-20220612132555279](.vuepress/public/images/javaRegMatchResult.png)**
+  **![image-20220612132555279](/images/javaRegMatchResult.png)**
 
 * 执行过程（原理）
 
