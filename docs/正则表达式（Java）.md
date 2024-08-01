@@ -51,7 +51,7 @@ permalink: /article/1gwfmbvf/
   }
   ```
 
-  **![image-20220612132555279](../images/javaRegMatchResult.png)**
+  **![image-20220612132555279](.vuepress/public/images/javaRegMatchResult.png)**
 
 * 执行过程（原理）
 

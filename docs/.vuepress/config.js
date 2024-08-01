@@ -8,8 +8,8 @@ export default defineUserConfig({
         profile: {
           name: 'Triabin',
           description: '童年真是一场回不去的梦啊',
-          avatar: '../images/Triabin.png',
-          circle: true
+          avatar: '/images/Triabin.png',
+          circle: false
         }
     }),
 
