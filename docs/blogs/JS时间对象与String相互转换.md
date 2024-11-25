@@ -2,11 +2,18 @@
 title: JS时间对象与String相互转换
 author: Triabin
 createTime: 2024/07/26 21:16:45
-permalink: /article/b9y2do30/
+tags:
+  - 前端
+  - JavaScript
+  - 格式化
+  - Date
+permalink: /blogs/pd3cj8cs/
 ---
-# 1、Date => String
+# JS时间对象与String相互转换
 
-## 代码
+## 1、Date => String
+
+### 1.1 代码
 
 ```javascript
 /**
@@ -42,7 +49,7 @@ Date.prototype.format = function (format) {
 };
 ```
 
-## 使用
+### 1.2 使用
 
 ```javascript
 let date = new Date();
@@ -62,9 +69,55 @@ console.log(format3 + " =>", date.format(format3));
 > format3 => 2022-09-23 23:24:39.836 am 五
 > Process finished with exit code 0
 
-# 2、String => Date
+### 1.3 在vue3项目中使用
 
-## 代码
+* 第一步，先在plugins路径下，新建一个js文件用以创建插件，然后在这个插件内给Date对象添加这个函数
+
+  **![image-20240807172113689](https://gitee.com/triabin/img_bed/raw/master/2024/08/07/43a5921a9a3348eccf25b4dde296667e-image-20240807172113689.png)**
+
+  插件内容：
+
+  ```javascript
+  // src/plugins/custom-func.js
+  export default {
+    install(app) {
+      /**
+       * 函数描述：时间格式化工具
+       * @param format {String} 格式（y-年，M-月，d-日，H-时[24]，h-时[12]，m-分，s-秒，S-毫秒(3位数)，q-季度，ap，午前am/午后pm）
+       * @returns {String}
+       */
+      Date.prototype.format = function(format = 'yyyy-MM-dd HH:mm:ss') {
+        // ...
+      };
+    }
+  };
+  ```
+
+* 第二步，在main.js中使用插件
+
+  ```javascript
+  import { createApp } from 'vue'
+  import App from './App.vue'
+  import router from './router'
+  import ElementPlus from 'element-plus'
+  import * as ElementPlusIconsVue from '@element-plus/icons-vue';
+  import components from '@/components/index.js';
+  import 'element-plus/dist/index.css';
+  import CustomFunc from "@/plugins/custom-func.js";
+  
+  const app = createApp(App);
+  app.use(router) // 配置路由
+    .use(ElementPlus) // 配置element-plus
+    .use(components) // 注册全局组件
+    .use(CustomFunc) // 注册自定义各个js对象的函数
+    .mount('#app');
+  ```
+
+> Tips：其他方法一样可以在这个插件里面自定义
+
+## 2、String => Date
+
+### 2.1 代码
 
 ```javascript
 /**
@@ -112,7 +165,7 @@ const DateUtils = {
 }
 ```
 
-## 使用
+### 2.2 使用
 
 ```javascript
 let date = new Date();
@@ -128,3 +181,4 @@ console.log(dateStr2 + ' =>', DateUtils.convert(dateStr2, DateUtils.format2));
 > 2022-09-23 23:38:08 => 2022-09-23T15:38:08.000Z
 > 2022年09月23日 23时38分08秒 => 2022-09-23T15:38:08.000Z
 > Process finished with exit code 0
+

@@ -6,3 +6,4 @@ docs/.vuepress/.cache
 docs/.vuepress/dist
 # 下载的模块文件
 node_modules
+package-lock.json
